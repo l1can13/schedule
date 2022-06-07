@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/calendar"
+        android:icon="@drawable/calendar"
+        android:title="@string/schedule" />
+
+    <item
+        android:id="@+id/task"
+        android:icon="@drawable/task"
+        android:title="@string/tasks" />
+
+    <item
+        android:id="@+id/files"
+        android:icon="@drawable/file"
+        android:title="@string/files" />
+
+    <item
+        android:id="@+id/settingsButton"
+        android:icon="@drawable/settings"
+        android:title="@string/settings" />
+
+</menu>

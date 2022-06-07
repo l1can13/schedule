@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">schedule</string>
+    <string name="week">НЕДЕЛЯ</string>
+    <string name="add">+</string>
+    <string name="schedule">Расписание</string>
+    <string name="tasks">Задания</string>
+    <string name="settings">Настройки</string>
+    <string name="files">Файлы</string>
+    <string name="title_activity_add">add</string>
+    <string name="adder">Добавить</string>
+    <string name="dayOfWeek">День недели:</string>
+    <string name="numberOfWeeks">Количество недель:</string>
+    <string name="begin">Начало:</string>
+    <string name="end">Конец:</string>
+    <string name="nameOfSubject">Название предмета:</string>
+    <string name="building">Корпус:</string>
+    <string name="audition">Аудитория:</string>
+    <string name="typeOfSubject">Тип занятия:</string>
+    <string name="professor">Преподаватель:</string>
+    <string name="email">E-mail:</string>
+    <string name="phone">Телефон:</string>
+    <string name="subtitle">Период времени для которого создается расписание</string>
+    <string name="numberOfVariantsTimetable">Количество вариантов расписаний:</string>
+    <string name="share">Поделиться расписанием:</string>
+    <string name="privacyPolicy">Политика конфиденциальности</string>
+    <string name="termsConditions">Условия и положения</string>
+    <string name="delete">Очистить расписание</string>
+    <string name="confirmation">Вы хотите удалить этот файл?</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+    <string name="variant">Вариант недели:</string>
+    <string name="nameOfFile">Название файла</string>
+</resources>

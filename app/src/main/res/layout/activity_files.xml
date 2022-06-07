@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Files"
+    android:background="@color/background"
+    android:id="@+id/main">
+
+    <LinearLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:background="@color/white">
+
+        <TextView
+            android:id="@+id/week"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="27dp"
+            android:layout_marginLeft="27dp"
+            android:layout_weight="0.95"
+            android:background="@color/transparent"
+            android:fontFamily="@font/tenor_sans"
+            android:text="@string/files"
+            android:textAllCaps="false"
+            android:textColor="#6614DE"
+            android:textSize="18sp"
+            tools:ignore="RtlSymmetry" />
+
+        <ImageButton
+            android:id="@+id/addButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="20dp"
+            android:layout_weight="0.05"
+            android:background="@color/transparent"
+            android:src="@drawable/addplus"
+            tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck"
+            android:layout_marginEnd="20dp" />
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/bottomMenu"
+        android:layout_below="@id/header" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomMenu"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        app:itemIconTint="@color/bottom_navigation_items_color"
+        app:itemTextColor="@color/bottom_navigation_items_color"
+        app:labelVisibilityMode="labeled"
+        app:menu="@menu/menu_bottom_navigation_menu" />
+
+</RelativeLayout>
