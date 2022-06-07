@@ -24,10 +24,11 @@
     <string name="share">Поделиться расписанием:</string>
     <string name="privacyPolicy">Политика конфиденциальности</string>
     <string name="termsConditions">Условия и положения</string>
-    <string name="delete">Очистить расписание</string>
+    <string name="deleteSchedule">Очистить расписание</string>
     <string name="confirmation">Вы хотите удалить этот файл?</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
     <string name="variant">Вариант недели:</string>
     <string name="nameOfFile">Название файла</string>
+    <string name="selectAll">Выбрать всё</string>
 </resources>

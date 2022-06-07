@@ -44,12 +44,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Files extends AppCompatActivity {
 
     /* Other */
-    private List<CustomFiles> filesList;
+    private List<CustomFiles> filesList = new LinkedList<>();
     private ImageButton load;
 
     /* Permission */
@@ -82,7 +83,27 @@ public class Files extends AppCompatActivity {
         }
     }
 
-    private void saveList(List<String> list) {
+    public void openFile(CustomFiles file) {
+        String mime = file.getType();
+        Uri uriReal = Uri.parse(file.getUri());
+        verifyStoragePermissions(this);
+        try {
+            Intent intent = new Intent(Intent.ACTION_VIEW, uriReal);
+            intent.setAction(Intent.ACTION_VIEW);
+            intent.setDataAndType(uriReal, mime);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(this, "Не найдено приложений для открытия этого файла", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+    }
+
+    public String getFilename(Uri uri) {
+        return new File(uri.getPath()).getName();
+    }
+
+    public void saveList(List<String> list) {
         Gson gson = new Gson();
         String json = gson.toJson(list);
         ed.putString(key, json);
@@ -90,13 +111,12 @@ public class Files extends AppCompatActivity {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    private List<String> loadList() {
+    public List<String> loadList() {
         List<String> arrayItems = new ArrayList<>();
         String serializedObject = sPref.getString(key, null);
         if (serializedObject != null) {
             Gson gson = new Gson();
-            Type type = new TypeToken<List<String>>() {
-            }.getType();
+            Type type = new TypeToken<List<String>>() {}.getType();
             arrayItems = gson.fromJson(serializedObject, type);
         }
 
@@ -116,21 +136,26 @@ public class Files extends AppCompatActivity {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    @SuppressLint("Range")
+    @SuppressLint({"Range", "NotifyDataSetChanged"})
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent result) {
         super.onActivityResult(requestCode, resultCode, result);
 
-        if (resultCode == RESULT_OK) {
-            Uri uri = Uri.parse(result.getDataString());
+        verifyStoragePermissions(this);
+        if (resultCode == RESULT_OK && requestCode == 0) {
+            Uri uri = result.getData();
+            CustomFiles file = new CustomFiles(getFilename(uri), uri.toString());
+            filesList.add(file);
+
+            recyclerViewAdapter.notifyDataSetChanged();
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        saveList(uriList);
-    }
+//    @Override
+//    protected void onDestroy() {
+//        super.onDestroy();
+//        saveList(uriList);
+//    }
 
     @SuppressLint("WrongConstant")
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -138,6 +163,7 @@ public class Files extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_files);
+        ActivityCompat.requestPermissions(Files.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
         verifyStoragePermissions(this);
 
         /* SharedPreferences setter */
@@ -150,8 +176,10 @@ public class Files extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewAdapter = new RecyclerViewAdapter(filesList, this, this);
+        recyclerView.setAdapter(recyclerViewAdapter);
 
-        uriList = loadList();
+//        uriList = loadList();
 
         load.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -168,13 +196,13 @@ public class Files extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.calendar:
-                        saveList(uriList);
+//                        saveList(uriList);
 
                         startActivity(new Intent(getApplicationContext(), Main.class));
                         overridePendingTransition(0, 0);
                         return true;
                     case R.id.task:
-                        saveList(uriList);
+//                        saveList(uriList);
 
                         startActivity(new Intent(getApplicationContext(), Tasks.class));
                         overridePendingTransition(0, 0);
@@ -182,7 +210,7 @@ public class Files extends AppCompatActivity {
                     case R.id.files:
                         return true;
                     case R.id.settingsButton:
-                        saveList(uriList);
+//                        saveList(uriList);
 
                         startActivity(new Intent(getApplicationContext(), Settings.class));
                         overridePendingTransition(0, 0);
