@@ -36,6 +36,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -103,7 +104,7 @@ public class Files extends AppCompatActivity {
         return new File(uri.getPath()).getName();
     }
 
-    public void saveList(List<String> list) {
+    public void saveList(List<CustomFiles> list) {
         Gson gson = new Gson();
         String json = gson.toJson(list);
         ed.putString(key, json);
@@ -111,12 +112,12 @@ public class Files extends AppCompatActivity {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public List<String> loadList() {
-        List<String> arrayItems = new ArrayList<>();
+    public List<CustomFiles> loadList() {
+        List<CustomFiles> arrayItems = new LinkedList<>();
         String serializedObject = sPref.getString(key, null);
         if (serializedObject != null) {
             Gson gson = new Gson();
-            Type type = new TypeToken<List<String>>() {}.getType();
+            Type type = new TypeToken<List<CustomFiles>>() {}.getType();
             arrayItems = gson.fromJson(serializedObject, type);
         }
 
@@ -135,6 +136,15 @@ public class Files extends AppCompatActivity {
         }
     }
 
+    public boolean isContains(List<CustomFiles> list, String filename) {
+        for (CustomFiles item : list) {
+            if (item.getName().equals(filename)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @SuppressLint({"Range", "NotifyDataSetChanged"})
     @Override
@@ -144,10 +154,29 @@ public class Files extends AppCompatActivity {
         verifyStoragePermissions(this);
         if (resultCode == RESULT_OK && requestCode == 0) {
             Uri uri = result.getData();
-            CustomFiles file = new CustomFiles(getFilename(uri), uri.toString());
-            filesList.add(file);
 
-            recyclerViewAdapter.notifyDataSetChanged();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                getContentResolver().takePersistableUriPermission(uri,Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+            }
+
+            String filename = getFilename(uri);
+            CustomFiles file = new CustomFiles(filename, uri.toString());
+            if (!isContains(filesList, filename)) {
+                filesList.add(file);
+                saveList(filesList);
+                recyclerViewAdapter.notifyDataSetChanged();
+            }
+            else {
+                AlertDialog.Builder dialog = new AlertDialog.Builder(Files.this)
+                        .setTitle("Данный файл уже сохранён!")
+                        .setNeutralButton("Ок", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.cancel();
+                            }
+                        });
+                dialog.show();
+            }
         }
     }
 
@@ -172,14 +201,14 @@ public class Files extends AppCompatActivity {
 
         load = findViewById(R.id.addButton);
 
+        filesList = loadList();
+
         /* RecyclerView setter */
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerViewAdapter = new RecyclerViewAdapter(filesList, this, this);
+        recyclerViewAdapter = new RecyclerViewAdapter(filesList, this);
         recyclerView.setAdapter(recyclerViewAdapter);
-
-//        uriList = loadList();
 
         load.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -191,18 +220,18 @@ public class Files extends AppCompatActivity {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomMenu);
         bottomNavigationView.setSelectedItemId(R.id.files);
 
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.calendar:
-//                        saveList(uriList);
+                        saveList(filesList);
 
                         startActivity(new Intent(getApplicationContext(), Main.class));
                         overridePendingTransition(0, 0);
                         return true;
                     case R.id.task:
-//                        saveList(uriList);
+                        saveList(filesList);
 
                         startActivity(new Intent(getApplicationContext(), Tasks.class));
                         overridePendingTransition(0, 0);
@@ -210,7 +239,7 @@ public class Files extends AppCompatActivity {
                     case R.id.files:
                         return true;
                     case R.id.settingsButton:
-//                        saveList(uriList);
+                        saveList(filesList);
 
                         startActivity(new Intent(getApplicationContext(), Settings.class));
                         overridePendingTransition(0, 0);

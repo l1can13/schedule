@@ -1,7 +1,9 @@
 package com.schedule;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -13,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,14 +33,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private List<CustomFiles> filesList;
     private List<CustomFiles> selectedList = new LinkedList<>();
     private Context context;
-    private Files files;
     private MainViewModel mainViewModel;
     private boolean isEnable = false, isSelectedAll = false;
 
-    public RecyclerViewAdapter(List<CustomFiles> filenamesList, Context context, Files files) {
+    public RecyclerViewAdapter(List<CustomFiles> filenamesList, Context context) {
         this.filesList = filenamesList;
         this.context = context;
-        this.files = files;
     }
 
     @NonNull
@@ -88,11 +89,28 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
                             switch (id) {
                                 case R.id.menu_delete:
-                                    for (CustomFiles s : selectedList) {
-                                        filesList.remove(s);
-                                    }
-
-                                    actionMode.finish();
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                                    builder.setMessage("Вы действительно хотите удалить файл их сохранённых?")
+                                            .setCancelable(false)
+                                            .setPositiveButton("Да", new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int id) {
+                                                    for (CustomFiles s : selectedList) {
+                                                        filesList.remove(s);
+                                                    }
+                                                    actionMode.finish();
+                                                    Toast.makeText(context,"Файл удалён из сохранённых!",
+                                                            Toast.LENGTH_SHORT).show();
+                                                }
+                                            })
+                                            .setNegativeButton("Нет", new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int id) {
+                                                    actionMode.finish();
+                                                    dialog.cancel();
+                                                }
+                                            });
+                                    AlertDialog alert = builder.create();
+                                    alert.setTitle("Внимание!");
+                                    alert.show();
                                     break;
                                 case R.id.selectAll:
                                     if (selectedList.size() == filesList.size()) {
