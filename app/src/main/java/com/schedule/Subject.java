@@ -2,71 +2,90 @@ package com.schedule;
 
 public class Subject {
 
-    private String nameOfSubject;
+    private String startTime;
+    private String endTime;
+    private String color;
+    private String name;
     private String building;
-    private int audition;
-    private String nameOfProfessor;
-    private String typeOfLesson;
-    private String begin;
-    private String end;
+    private String audition;
+    private Lecturer lecturer;
+    private String type;
 
-    public Subject(String name) {
-        this.nameOfSubject = name;
+    public Subject() {
     }
 
-    public void setNameOfSubject(String nameOfSubject) {
-        this.nameOfSubject = nameOfSubject;
-    }
-
-    public void setBuilding(String building) {
+    public Subject(String startTime, String endTime, String color, String name, String building, String audition, Lecturer lecturer, String type) {
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.color = color;
+        this.name = name;
         this.building = building;
-    }
-
-    public void setAudition(int audition) {
         this.audition = audition;
+        this.lecturer = lecturer;
+        this.type = type;
     }
 
-    public void setNameOfProfessor(String nameOfProfessor) {
-        this.nameOfProfessor = nameOfProfessor;
+    public String getStartTime() {
+        return startTime;
     }
 
-    public void setTypeOfLesson(String typeOfLesson) {
-        this.typeOfLesson = typeOfLesson;
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
     }
 
-    public void setBegin(String begin) {
-        this.begin = begin;
+    public String getEndTime() {
+        return endTime;
     }
 
-    public void setEnd(String end) {
-        this.end = end;
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getBuilding() {
         return building;
     }
 
-    public int getAudition() {
+    public void setBuilding(String building) {
+        this.building = building;
+    }
+
+    public String getAudition() {
         return audition;
     }
 
-    public String getNameOfProfessor() {
-        return nameOfProfessor;
+    public void setAudition(String audition) {
+        this.audition = audition;
     }
 
-    public String getTypeOfLesson() {
-        return typeOfLesson;
+    public Lecturer getLecturer() {
+        return lecturer;
     }
 
-    public String getBegin() {
-        return begin;
+    public void setLecturer(Lecturer lecturer) {
+        this.lecturer = lecturer;
     }
 
-    public String getEnd() {
-        return end;
+    public String getType() {
+        return type;
     }
 
-    public String getNameOfSubject() {
-        return nameOfSubject;
+    public void setType(String type) {
+        this.type = type;
     }
 }

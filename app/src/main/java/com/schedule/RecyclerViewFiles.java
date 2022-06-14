@@ -28,7 +28,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.LinkedList;
 import java.util.List;
 
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
+public class RecyclerViewFiles extends RecyclerView.Adapter<RecyclerViewFiles.ViewHolder> {
 
     private List<CustomFiles> filesList;
     private List<CustomFiles> selectedList = new LinkedList<>();
@@ -36,22 +36,22 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private MainViewModel mainViewModel;
     private boolean isEnable = false, isSelectedAll = false;
 
-    public RecyclerViewAdapter(List<CustomFiles> filenamesList, Context context) {
+    public RecyclerViewFiles(List<CustomFiles> filenamesList, Context context) {
         this.filesList = filenamesList;
         this.context = context;
     }
 
     @NonNull
     @Override
-    public RecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_view_layout, parent, false);
+    public RecyclerViewFiles.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_view_files_layout, parent, false);
         mainViewModel = ViewModelProviders.of((FragmentActivity) context)
                 .get(MainViewModel.class);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(RecyclerViewAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
+    public void onBindViewHolder(RecyclerViewFiles.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         CustomFiles current = filesList.get(position);
 
         holder.filename.setText(current.getName());

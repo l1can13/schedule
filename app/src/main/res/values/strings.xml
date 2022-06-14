@@ -31,4 +31,6 @@
     <string name="variant">Вариант недели:</string>
     <string name="nameOfFile">Название файла</string>
     <string name="selectAll">Выбрать всё</string>
+    <string name="monday">Понедельник</string>
+    <string name="dateExample">13.06</string>
 </resources>

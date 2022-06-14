@@ -24,8 +24,6 @@ import java.util.HashMap;
 public class Add extends AppCompatActivity {
 
     private ImageButton back;
-    private static DayOfWeek day;
-    private static Subject subject;
     private static EditText variantOfWeek;
     private static EditText dayOfWeek;
     private static EditText begin;

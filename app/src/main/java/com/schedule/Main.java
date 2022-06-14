@@ -9,12 +9,9 @@ import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.view.Gravity;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -22,7 +19,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -31,45 +27,32 @@ import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.text.BreakIterator;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 
 public class Main extends AppCompatActivity {
 
     private ImageButton addButton;
-    private LinearLayout linearLayout;
     private LinearLayout horizontalScrollView;
 
     public static final String PREF = "myprefs";
     public static final String COLOR_PREF = "colorPref";
     private final String key = "keyMain";
-    public static final String Variant = "variant";
     private SharedPreferences sPref;
     private SharedPreferences sPrefMain;
-    private HashMap<Add.keys, String> hashMap = new HashMap<>();
     private Button[] buttonWeeks;
     private int mem;
-    private String variants;
-    private int variantsInt;
+    public static final String Variant = "variant";
+    private int variantsCount;
     private TextView currentWeek;
-    private static Week[] weeks;
-
-    public static Week getWeek(int index) {
-        return weeks[index];
-    }
-
-    private int dpToPx(int dp) {
-        DisplayMetrics displayMetrics = getApplicationContext().getResources().getDisplayMetrics();
-        return (int) ((dp * displayMetrics.density) + 0.5);
-    }
 
     private void createList() {
         String getCount = sPref.getString(COLOR_PREF, "");
+        //String getVariantsCount = sPref.getString(Variant, "");
+        //variantsCount = Integer.parseInt(getVariantsCount);
 
         if (!getCount.equals("")) {
-            buttonWeeks = new Button[Integer.parseInt(getCount)];
+            int size = Integer.parseInt(getCount);
+            buttonWeeks = new Button[size];
 
             int buttonWidth = getScreenWidth() / 11;
             for (int i = 0; i < buttonWeeks.length; ++i) {
@@ -102,49 +85,8 @@ public class Main extends AppCompatActivity {
                         mem = finalI;
                     }
                 });
-
                 horizontalScrollView.addView(buttonWeeks[i]);
             }
-        }
-    }
-
-    public void showTimetable(Week week) {
-        for (int i = 0; i < week.getDaysOfWeek().size(); ++i) {
-            LinearLayout dayOfWeek = new LinearLayout(linearLayout.getContext());
-            LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dpToPx(28));
-            dayOfWeek.setLayoutParams(linearParams);
-            dayOfWeek.setGravity(Gravity.CENTER_VERTICAL);
-            dayOfWeek.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.blue));
-
-            TextView textView = new TextView(dayOfWeek.getContext());
-            LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            textParams.leftMargin = dpToPx(8);
-            textView.setLayoutParams(textParams);
-            textView.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.black));
-            textView.setTypeface(ResourcesCompat.getFont(getApplicationContext(), R.font.tenor_sans));
-            textView.setText(week.getDaysOfWeek().get(i).getNameDay());
-            textView.setTextSize(18);
-            dayOfWeek.addView(textView);
-
-            for (int j = 0; j < week.getDaysOfWeek().get(i).getSubjects().size(); ++j) {
-                LinearLayout subjectLayout = new LinearLayout(dayOfWeek.getContext());
-                LinearLayout.LayoutParams subjectParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dpToPx(60));
-                subjectLayout.setLayoutParams(subjectParams);
-                subjectLayout.setGravity(Gravity.CENTER_VERTICAL);
-                subjectLayout.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.white));
-
-                TextView subjectName = new TextView(dayOfWeek.getContext());
-                LinearLayout.LayoutParams nameParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                nameParams.leftMargin = dpToPx(8);
-                subjectName.setLayoutParams(nameParams);
-                subjectName.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.black));
-                subjectName.setTypeface(ResourcesCompat.getFont(getApplicationContext(), R.font.tenor_sans));
-                subjectName.setText(week.getDaysOfWeek().get(i).getSubjects().get(j).getNameOfSubject());
-                subjectName.setTextSize(18);
-                dayOfWeek.addView(subjectName);
-            }
-
-            linearLayout.addView(dayOfWeek);
         }
     }
 
@@ -163,39 +105,13 @@ public class Main extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         addButton = findViewById(R.id.addButton);
-        linearLayout = findViewById(R.id.contentContainer);
         horizontalScrollView = findViewById(R.id.switcher);
         currentWeek = findViewById(R.id.week);
 
         sPref = getSharedPreferences(PREF, Context.MODE_PRIVATE);
         sPrefMain = getSharedPreferences(key, Context.MODE_PRIVATE);
 
-        try {
-            String serializedObject = sPrefMain.getString(key, null);
-            if (serializedObject != null) {
-                Gson gson = new Gson();
-                Type type = new TypeToken<HashMap<Add.keys, String>>() {
-                }.getType();
-                hashMap = gson.fromJson(serializedObject, type);
-            }
-        } catch (Exception e) {
-            System.out.println("ПУСТО");
-        }
-
         createList();
-
-//        variants = sPref.getString(Variant, "");
-//        variantsInt = Integer.parseInt(variants);
-//        if (!variants.isEmpty()) {
-//            weeks = new Week[variantsInt];
-//            for (int i = 0; i < variantsInt; ++i) {
-//                weeks[i] = new Week();
-//                DayOfWeek day = new DayOfWeek(hashMap.get(Add.keys.dayOfWeekKey));
-//                Subject subject = new Subject(hashMap.get(Add.keys.subjectNameKey));
-//                day.setSubjects(subject);
-//                weeks[i].updateDaysOfWeek(day);
-//            }
-//        }
 
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
