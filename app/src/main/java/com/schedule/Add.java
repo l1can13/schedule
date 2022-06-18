@@ -20,84 +20,51 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Add extends AppCompatActivity {
 
     private ImageButton back;
-    private static EditText variantOfWeek;
-    private static EditText dayOfWeek;
-    private static EditText begin;
-    private static EditText end;
-    private static EditText subjectName;
-    private static EditText building;
-    private static EditText audition;
-    private static EditText subjectType;
-    private static EditText professor;
-    private static EditText eMail;
-    private static EditText phoneNumber;
-    private static HashMap<keys, String> infoDict = new HashMap<>();
-    private final static String key = "keyMain";
-
-    protected enum keys {variantOfWeekKey, dayOfWeekKey, beginKey, endKey, subjectNameKey, buildingKey, auditionKey, subjectTypeKey, professorKey, eMailKey, phoneNumberKey}
+    private ImageButton done;
+    private EditText variantEditText;
+    private EditText dayOfWeek;
+    private EditText begin;
+    private EditText end;
+    private EditText subjectName;
+    private EditText building;
+    private EditText audition;
+    private EditText subjectType;
+    private EditText professor;
+    private EditText eMail;
+    private EditText phoneNumber;
 
     private static SharedPreferences sPref;
     private static SharedPreferences.Editor ed;
+    private String PREF = "myprefs";
+    private String LIST_OF_WEEKS = "listOfWeeks";
 
-    private static void fillHashMap() {
-        infoDict.put(keys.variantOfWeekKey, variantOfWeek.getText().toString());
-        infoDict.put(keys.dayOfWeekKey, dayOfWeek.getText().toString());
-        infoDict.put(keys.beginKey, begin.getText().toString());
-        infoDict.put(keys.endKey, end.getText().toString());
-        infoDict.put(keys.subjectNameKey, subjectName.getText().toString());
-        infoDict.put(keys.buildingKey, building.getText().toString());
-        infoDict.put(keys.auditionKey, audition.getText().toString());
-        infoDict.put(keys.subjectTypeKey, subjectType.getText().toString());
-        infoDict.put(keys.professorKey, professor.getText().toString());
-        infoDict.put(keys.eMailKey, eMail.getText().toString());
-        infoDict.put(keys.phoneNumberKey, phoneNumber.getText().toString());
-    }
-
-    private void setHashMap() {
-        variantOfWeek.setText(infoDict.get(keys.variantOfWeekKey));
-        dayOfWeek.setText(infoDict.get(keys.dayOfWeekKey));
-        begin.setText(infoDict.get(keys.beginKey));
-        end.setText(infoDict.get(keys.endKey));
-        subjectName.setText(infoDict.get(keys.subjectNameKey));
-        building.setText(infoDict.get(keys.buildingKey));
-        audition.setText(infoDict.get(keys.auditionKey));
-        subjectType.setText(infoDict.get(keys.subjectTypeKey));
-        professor.setText(infoDict.get(keys.professorKey));
-        eMail.setText(infoDict.get(keys.eMailKey));
-        phoneNumber.setText(infoDict.get(keys.phoneNumberKey));
-    }
-
-    protected static void saveList() throws IOException {
-        try {
-            fillHashMap();
-            Gson gson = new Gson();
-            String json = gson.toJson(infoDict);
-            ed.putString(key, json);
-            ed.commit();
-        } catch (Exception e) {
-            System.out.println("ПУСТО");
-        }
-    }
+    private List<Week> weeks;
+    private Week currentWeek;
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    protected static HashMap<keys, String> loadHashMap() throws IOException, ClassNotFoundException {
-        HashMap<keys, String> hashMap = new HashMap<>();
-        try {
-            String serializedObject = sPref.getString(key, null);
-            if (serializedObject != null) {
-                Gson gson = new Gson();
-                Type type = new TypeToken<HashMap<keys, String>>() {
-                }.getType();
-                hashMap = gson.fromJson(serializedObject, type);
-            }
-        } catch (Exception e) {
-            System.out.println("ПУСТО");
+    public List<Week> loadWeeks() {
+        List<Week> arrayItems = new LinkedList<>();
+        String serializedObject = sPref.getString(LIST_OF_WEEKS, null);
+        if (serializedObject != null) {
+            Gson gson = new Gson();
+            Type type = new TypeToken<List<Week>>() {}.getType();
+            arrayItems = gson.fromJson(serializedObject, type);
         }
-        return hashMap;
+
+        return arrayItems;
+    }
+
+    public void saveWeeks(List<Week> list) {
+        Gson gson = new Gson();
+        String json = gson.toJson(list);
+        ed.putString(LIST_OF_WEEKS, json);
+        ed.commit();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -107,7 +74,9 @@ public class Add extends AppCompatActivity {
         setContentView(R.layout.activity_add);
 
         back = findViewById(R.id.backArrow);
-        variantOfWeek = findViewById(R.id.variantEditText);
+        done = findViewById(R.id.doneButton);
+
+        variantEditText = findViewById(R.id.variantEditText);
         dayOfWeek = findViewById(R.id.dayOfWeekEditText);
         begin = findViewById(R.id.timePickerBegin);
         end = findViewById(R.id.timePickerEnd);
@@ -119,17 +88,10 @@ public class Add extends AppCompatActivity {
         eMail = findViewById(R.id.emailEditText);
         phoneNumber = findViewById(R.id.phoneNumberEditText);
 
-        sPref = getSharedPreferences(key, Context.MODE_PRIVATE);
+        sPref = getSharedPreferences(PREF, Context.MODE_PRIVATE);
         ed = sPref.edit();
 
-        try {
-            infoDict = loadHashMap();
-            setHashMap();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+        weeks = loadWeeks();
 
         begin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -169,15 +131,42 @@ public class Add extends AppCompatActivity {
             }
         });
 
+        done.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Subject subject = new Subject();
+
+                subject.setStartTime(begin.getText().toString());
+                subject.setEndTime(end.getText().toString());
+                subject.setName(subjectName.getText().toString());
+                subject.setBuilding(building.getText().toString());
+                subject.setAudition(audition.getText().toString());
+                subject.setType(subjectType.getText().toString());
+
+                Lecturer lecturer = new Lecturer(professor.getText().toString(), eMail.getText().toString(), phoneNumber.getText().toString());
+                subject.setLecturer(lecturer);
+
+                currentWeek = weeks.get(Integer.parseInt(variantEditText.getText().toString()) - 1);
+                if (!currentWeek.isExist(dayOfWeek.getText().toString())) {
+                    Day day = new Day();
+                    day.setName(dayOfWeek.getText().toString());
+                    day.getSubjects().add(subject);
+                    currentWeek.getDays().add(day);
+                }
+                else {
+                    Day day = currentWeek.findDay(dayOfWeek.getText().toString());
+                    day.getSubjects().add(subject);
+                }
+
+                saveWeeks(weeks);
+                startActivity(new Intent(getApplicationContext(), Main.class));
+            }
+        });
+
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                try {
-                    saveList();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                startActivity(new Intent(getApplicationContext(), Main.class));
+                finish();
             }
         });
     }

@@ -10,7 +10,7 @@
         android:background="@color/blue">
         
         <TextView
-            android:id="@+id/dayOfWeekTextView"
+            android:id="@+id/recyclerViewDayOfWeek"
             android:layout_width="wrap_content"
             android:layout_height="28dp"
             android:layout_alignParentStart="true"

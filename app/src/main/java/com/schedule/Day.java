@@ -1,5 +1,6 @@
 package com.schedule;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class Day {
@@ -9,12 +10,21 @@ public class Day {
     private List<Subject> subjects;
 
     public Day() {
+        subjects = new LinkedList<>();
     }
 
     public Day(String name, String date, List<Subject> subjects) {
         this.name = name;
         this.date = date;
         this.subjects = subjects;
+    }
+
+    public void update(List<Subject> subjects) {
+        setSubjects(subjects);
+    }
+
+    public void addSubject(Subject subject) {
+        this.subjects.add(subject);
     }
 
     public String getName() {

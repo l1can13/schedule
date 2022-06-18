@@ -13,4 +13,8 @@
     <color name="titles">#2C1E4D</color>
     <color name="checked">#6614DE</color>
     <color name="def">#2C1E4D</color>
+    <color name="lecture">#7AAEFC</color>
+    <color name="practice">#FD8A5E</color>
+    <color name="labs">#FFE661</color>
+    <color name="gray">#BEBEBE</color>
 </resources>

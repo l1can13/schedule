@@ -19,18 +19,18 @@ public class Settings extends AppCompatActivity {
     private SharedPreferences sPref;
     private SharedPreferences.Editor ed;
     public static final String PREF = "myprefs";
-    public static final String COLOR_PREF = "colorPref";
-    public static final String Variant = "variant";
+    public static final String AMOUNT_OF_WEEKS = "amountOfWeeks";
+    public static final String VARIANT = "variants";
 
     private void saveText() {
-        ed.putString(COLOR_PREF, setNumberOfWeeks.getText().toString());
-        ed.putString(Variant, setVariantsOfWeeks.getText().toString());
+        ed.putString(AMOUNT_OF_WEEKS, setNumberOfWeeks.getText().toString());
+        ed.putString(VARIANT, setVariantsOfWeeks.getText().toString());
         ed.apply();
     }
 
     private void loadText() {
-        String savedText = sPref.getString(COLOR_PREF, "");
-        String savedVariant = sPref.getString(Variant, "");
+        String savedText = sPref.getString(AMOUNT_OF_WEEKS, "");
+        String savedVariant = sPref.getString(VARIANT, "");
         setVariantsOfWeeks.setText(savedVariant);
         setNumberOfWeeks.setText(savedText);
     }

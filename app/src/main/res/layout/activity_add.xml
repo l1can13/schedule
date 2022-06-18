@@ -421,10 +421,20 @@
         android:gravity="center">
 
         <ImageButton
+            android:id="@+id/deleteButton"
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:background="@color/transparent"
             android:src="@drawable/trash"
+            android:scaleType="fitCenter"/>
+
+        <ImageButton
+            android:id="@+id/doneButton"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginStart="85dp"
+            android:background="@color/transparent"
+            android:src="@drawable/done"
             android:scaleType="fitCenter"/>
 
     </LinearLayout>
